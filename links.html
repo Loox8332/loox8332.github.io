@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lucas bryan</title>
+    <title>links - lucas bryan</title>
     <style>
         /* --- RESET & LAYOUT --- */
         html, body, * {
+            cursor: none !important;
+        }
+
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            cursor: none !important; /* Force hide system cursor */
         }
 
         body {
@@ -32,70 +35,94 @@
             --text-color: #262626;
         }
 
-        /* --- ENTRY ANIMATIONS --- */
+        /* --- ANIMATIONS --- */
+        @keyframes slideInRight {
+            0% { 
+                opacity: 0;
+                transform: translateX(100vw);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         @keyframes fadeIn {
             to { opacity: 1; }
         }
 
-        /* --- NAVIGATION SECTION --- */
-        nav {
+        /* --- TOP NAV (BACK BUTTON) --- */
+        .back-nav {
+            position: absolute; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 15vh;
+            display: flex;
+            z-index: 100; 
+            opacity: 0;
+            animation: fadeIn 0.5s ease 0.8s forwards;
+        }
+
+        .back-nav a {
+            flex: 1;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            text-decoration: none;
+            padding-left: 2vw;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            height: 100%; 
+        }
+
+        .back-nav a:hover {
+            background-color: var(--highlight-cyan);
+        }
+
+        .arrow-icon {
+            height: 8vh;
+            width: auto;
+            fill: var(--text-color);
+        }
+
+        /* --- MAIN LINKS SECTION --- */
+        .links-container {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            /* Add padding to top so links don't overlap back button area */
+            padding-top: 15vh; 
             width: 100%;
         }
 
-        nav a {
-            flex: 1;
+        .links-container a {
+            flex: 1; /* Stretch to fill available vertical space equally */
             display: flex;
-            justify-content: flex-end; 
-            align-items: center;       
+            justify-content: center; /* CENTERED TEXT (Matches your image) */
+            align-items: center;     
             text-decoration: none;
             color: var(--text-color);
-            font-size: 12vh; 
+            font-size: 10vh; /* Large text */
             line-height: 1;
             letter-spacing: -0.03em;
-            padding-right: 10px; 
             transition: background-color 0.2s ease;
             width: 100%;
             
-            /* ANIMATION START STATE: Hidden */
-            opacity: 0;
-            animation: fadeIn 0.6s ease forwards;
+            /* Animation Start State */
+            opacity: 0; 
+            transform: translateX(100vw);
+            animation: slideInRight 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
         }
 
-        /* ANIMATION DELAYS (Staggered from top) */
-        nav a:nth-child(1) { animation-delay: 0.6s; } /* "me" - appears after name */
-        nav a:nth-child(2) { animation-delay: 0.8s; } /* "projects" */
-        nav a:nth-child(3) { animation-delay: 1s; } /* "links" */
+        /* Staggered Delays for Slide In */
+        .links-container a:nth-child(1) { animation-delay: 0.2s; } /* linkedin */
+        .links-container a:nth-child(2) { animation-delay: 0.4s; } /* twitter */
+        .links-container a:nth-child(3) { animation-delay: 0.6s; } /* instagram */
 
-        nav a:hover {
+        .links-container a:hover {
             background-color: var(--highlight-cyan);
-        }
-
-        /* --- FOOTER NAME (lucas bryan) --- */
-        .signature-container {
-            width: 100%;
-            background-color: var(--highlight-cyan);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-end;
-            flex-shrink: 0;
-            
-            /* ANIMATION: Fades in first */
-            opacity: 0;
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        .signature {
-            font-size: 16vw; 
-            line-height: 1.2; 
-            color: var(--text-color);
-            text-align: right;
-            padding-right: 0; 
-            padding-bottom: 1vh; 
         }
 
         /* --- EXIT ANIMATION --- */
@@ -107,29 +134,30 @@
             to { transform: translateX(-100vw); opacity: 0; }
         }
 
-        /* --- CUSTOM CURSOR CSS --- */
+        /* --- CURSOR --- */
         #cursor-dot {
             position: fixed;
             width: 4px; height: 4px;
-            background-color: #262626; 
+            background-color: #262626;
             border-radius: 50%;
-            pointer-events: none; 
-            z-index: 2147483647; /* Highest possible */
-            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 2147483647;
+            top: 0; left: 0; /* Reset for JS positioning */
         }
-
         #cursor-trail {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 2147483646; 
+            z-index: 2147483646;
         }
 
-        /* --- MOBILE BREAKPOINT --- */
+        /* --- MOBILE --- */
         @media (max-width: 768px) {
-            nav a { font-size: 10vh; }
-            .signature { font-size: 16vw; }
+            .back-nav { height: 10vh; background: white; position: fixed; }
+            .links-container { padding-top: 10vh; }
+            .links-container a { font-size: 8vh; }
+            .arrow-icon { height: 4vh; }
         }
     </style>
 </head>
@@ -138,26 +166,31 @@
     <div id="cursor-dot"></div>
     <canvas id="cursor-trail"></canvas>
 
-    <nav>
-        <a href="me.html">me</a>
-        <a href="projects.html">projects</a>
-        <a href="links.html">links</a>
+    <nav class="back-nav">
+        <a href="index.html">
+            <svg class="arrow-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </a>
     </nav>
 
-    <div class="signature-container">
-        <div class="signature">lucas bryan</div>
+    <div class="links-container">
+        <a href="https://www.linkedin.com/in/lucasmbryan/" target="_blank">linkedin</a>
+        <a href="https://x.com/Loox8332" target="_blank">twitter</a>
+        <a href="https://www.instagram.com/lucasmbry/" target="_blank">instagram</a>
     </div>
 
     <script>
+        // --- CURSOR LOGIC ---
         const dot = document.getElementById('cursor-dot');
         const canvas = document.getElementById('cursor-trail');
         const ctx = canvas.getContext('2d');
-
         let width = window.innerWidth;
         let height = window.innerHeight;
         let mouse = { x: width / 2, y: height / 2 };
         let trail = [];
         const trailLength = 40;
+        const dotSize = 4;
 
         function resize() {
             width = window.innerWidth;
@@ -171,17 +204,16 @@
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
-            dot.style.left = `${mouse.x}px`;
-            dot.style.top = `${mouse.y}px`;
+            dot.style.left = (mouse.x - (dotSize / 2)) + 'px';
+            dot.style.top = (mouse.y - (dotSize / 2)) + 'px';
         });
 
         function animate() {
             trail.push({ x: mouse.x, y: mouse.y });
             if (trail.length > trailLength) trail.shift();
-            
             ctx.clearRect(0, 0, width, height);
 
-            ctx.lineCap = 'butt'; // Keeps trail smooth without dots
+            ctx.lineCap = 'butt'; 
             ctx.lineJoin = 'round';
             ctx.lineWidth = 3;
 
@@ -199,10 +231,13 @@
         }
         /*animate();*/
 
-        // PAGE TRANSITION LOGIC
+        // --- TRANSITION LOGIC ---
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
-                e.preventDefault(); 
+                // Only animate internal links (exclude target="_blank")
+                if (this.getAttribute('target') === '_blank') return;
+                
+                e.preventDefault();
                 const href = this.getAttribute('href');
                 document.body.classList.add('page-exiting');
                 setTimeout(() => {
