@@ -35,7 +35,6 @@
             --text-color: #262626;
         }
 
-        /* --- TOP NAV (FADE HEADER) --- */
         nav {
             position: absolute; 
             top: 0;
@@ -73,7 +72,6 @@
             fill: var(--text-color);
         }
 
-        /* --- CONTENT SECTION --- */
         main {
             position: relative;
             width: 100vw;
@@ -82,12 +80,10 @@
             justify-content: center;
             align-items: center;
             padding: 0 4vw; 
-            
             transform: translateX(100vw);
             animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Matches the layout of project rows */
         .text-col {
             display: flex;
             flex-direction: column;
@@ -96,7 +92,6 @@
             max-width: 1400px;
         }
 
-        /* Title styling matches Project titles */
         h2 {
             font-size: 2.5rem;
             color: var(--text-color);
@@ -105,17 +100,15 @@
             font-weight: 700;
         }
 
-        /* Body text matches Project descriptions */
         p {
             font-size: 1.2rem;
             line-height: 1.5;
             text-align: justify;
             color: #333;
-            font-weight: 400; /* Lighter weight for readability */
+            font-weight: 400;
             text-transform: lowercase;
         }
 
-        /* --- ANIMATIONS --- */
         @keyframes slideInRight {
             0% { transform: translateX(100vw); }
             100% { transform: translateX(0); }
@@ -133,15 +126,15 @@
             to { transform: translateX(-100vw); opacity: 0; }
         }
 
-        /* --- CURSOR --- */
         #cursor-dot {
             position: fixed;
-            width: 4px; height: 4px;
+            top: 0; left: 0;
+            width: 8px; height: 8px;
             background-color: #262626;
             border-radius: 50%;
             pointer-events: none;
             z-index: 2147483647;
-            top: 0; left: 0;
+            will-change: transform;
         }
         #cursor-trail {
             position: fixed;
@@ -151,7 +144,6 @@
             z-index: 2147483646;
         }
 
-        /* --- MOBILE --- */
         @media (max-width: 768px) {
             body { overflow-y: auto; display: block; }
             main { display: block; height: auto; padding-top: 14vh; padding-bottom: 5vh; }
@@ -199,7 +191,6 @@
         let mouse = { x: width / 2, y: height / 2 };
         let trail = [];
         const trailLength = 40;
-        const dotSize = 4;
 
         function resize() {
             width = window.innerWidth;
@@ -213,8 +204,7 @@
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
-            dot.style.left = (mouse.x - (dotSize / 2)) + 'px';
-            dot.style.top = (mouse.y - (dotSize / 2)) + 'px';
+            dot.style.transform = `translate3d(${mouse.x - 4}px, ${mouse.y - 4}px, 0)`;
         });
 
         function animate() {
@@ -238,7 +228,9 @@
             }
             requestAnimationFrame(animate);
         }
-        /*animate();*/
+        
+        // !!! COMMENTED OUT TO FIX LAG !!!
+        // animate();
 
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {

@@ -59,21 +59,22 @@
             transition: background-color 0.2s ease;
             width: 100%;
             
-            /* ANIMATION START STATE: Hidden */
+            /* Animation */
             opacity: 0;
             animation: fadeIn 0.6s ease forwards;
+            will-change: opacity, background-color;
         }
 
-        /* ANIMATION DELAYS (Staggered from top) */
-        nav a:nth-child(1) { animation-delay: 0.6s; } /* "me" - appears after name */
-        nav a:nth-child(2) { animation-delay: 0.8s; } /* "projects" */
-        nav a:nth-child(3) { animation-delay: 1s; } /* "links" */
+        /* ANIMATION DELAYS */
+        nav a:nth-child(1) { animation-delay: 0.6s; }
+        nav a:nth-child(2) { animation-delay: 0.8s; }
+        nav a:nth-child(3) { animation-delay: 1s; }
 
         nav a:hover {
             background-color: var(--highlight-cyan);
         }
 
-        /* --- FOOTER NAME (lucas bryan) --- */
+        /* --- FOOTER NAME --- */
         .signature-container {
             width: 100%;
             background-color: var(--highlight-cyan);
@@ -84,7 +85,6 @@
             align-items: flex-end;
             flex-shrink: 0;
             
-            /* ANIMATION: Fades in first */
             opacity: 0;
             animation: fadeIn 0.6s ease forwards;
         }
@@ -110,12 +110,13 @@
         /* --- CUSTOM CURSOR CSS --- */
         #cursor-dot {
             position: fixed;
-            width: 4px; height: 4px;
+            top: 0; left: 0; /* Fixed at top-left, moved via transform */
+            width: 8px; height: 8px;
             background-color: #262626; 
             border-radius: 50%;
             pointer-events: none; 
-            z-index: 2147483647; /* Highest possible */
-            transform: translate(-50%, -50%);
+            z-index: 2147483647; 
+            will-change: transform; /* Optimization hint */
         }
 
         #cursor-trail {
@@ -126,7 +127,6 @@
             z-index: 2147483646; 
         }
 
-        /* --- MOBILE BREAKPOINT --- */
         @media (max-width: 768px) {
             nav a { font-size: 10vh; }
             .signature { font-size: 16vw; }
@@ -168,20 +168,21 @@
         window.addEventListener('resize', resize);
         resize();
 
+        // OPTIMIZED MOUSE TRACKING (Uses GPU transform)
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
-            dot.style.left = `${mouse.x}px`;
-            dot.style.top = `${mouse.y}px`;
+            // Subtract 4px (half of 8px width) to center it
+            dot.style.transform = `translate3d(${mouse.x - 4}px, ${mouse.y - 4}px, 0)`;
         });
 
+        // TRAIL ANIMATION (Code preserved but DISABLED for performance)
         function animate() {
             trail.push({ x: mouse.x, y: mouse.y });
             if (trail.length > trailLength) trail.shift();
             
             ctx.clearRect(0, 0, width, height);
-
-            ctx.lineCap = 'butt'; // Keeps trail smooth without dots
+            ctx.lineCap = 'butt'; 
             ctx.lineJoin = 'round';
             ctx.lineWidth = 3;
 
@@ -197,9 +198,11 @@
             }
             requestAnimationFrame(animate);
         }
-        /*animate();*/
+        
+        // !!! COMMENTED OUT TO FIX LAG !!!
+        // animate();
 
-        // PAGE TRANSITION LOGIC
+        // PAGE TRANSITION
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault(); 

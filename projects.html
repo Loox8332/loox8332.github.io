@@ -96,7 +96,6 @@
             scroll-behavior: smooth;
         }
 
-        /* --- PROJECT SECTION --- */
         .project-row {
             display: flex;
             width: 90%;
@@ -104,7 +103,6 @@
             margin-bottom: 15vh;
             align-items: flex-start;
             gap: 5vw;
-            
             opacity: 0;
             transform: translateX(100vw);
             animation: slideInRight 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
@@ -137,7 +135,6 @@
             font-weight: 400;
         }
 
-        /* --- GITHUB LINK STYLING --- */
         .github-link {
             font-size: 1.5rem;
             color: var(--text-color);
@@ -155,7 +152,6 @@
             color: var(--text-color);
         }
 
-        /* --- EXIT ANIMATION --- */
         body.page-exiting {
             animation: slideOutLeft 0.5s cubic-bezier(0.7, 0, 0.3, 1) forwards;
         }
@@ -164,15 +160,15 @@
             to { transform: translateX(-100vw); opacity: 0; }
         }
 
-        /* --- CURSOR --- */
         #cursor-dot {
             position: fixed;
-            width: 4px; height: 4px;
+            top: 0; left: 0;
+            width: 8px; height: 8px;
             background-color: #262626;
             border-radius: 50%;
             pointer-events: none;
             z-index: 2147483647;
-            top: 0; left: 0;
+            will-change: transform;
         }
         #cursor-trail {
             position: fixed;
@@ -182,7 +178,6 @@
             z-index: 2147483646;
         }
 
-        /* --- MOBILE --- */
         @media (max-width: 768px) {
             body { overflow-y: auto; display: block; }
             
@@ -269,7 +264,6 @@
         let mouse = { x: width / 2, y: height / 2 };
         let trail = [];
         const trailLength = 40;
-        const dotSize = 4;
 
         function resize() {
             width = window.innerWidth;
@@ -283,8 +277,7 @@
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
-            dot.style.left = (mouse.x - (dotSize / 2)) + 'px';
-            dot.style.top = (mouse.y - (dotSize / 2)) + 'px';
+            dot.style.transform = `translate3d(${mouse.x - 4}px, ${mouse.y - 4}px, 0)`;
         });
 
         function animate() {
@@ -308,7 +301,9 @@
             }
             requestAnimationFrame(animate);
         }
-        /*animate();*/
+        
+        // !!! COMMENTED OUT TO FIX LAG !!!
+        // animate();
 
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
